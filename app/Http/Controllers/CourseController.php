@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Episode;
 use Illuminate\Http\Request;
 use App\Youtube\YoutubeServices;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -71,26 +72,32 @@ class CourseController extends Controller
     {
         $course = Course::where('id', $id)->with('episodes')->first();
 
-        // $this->authorize('update', $course);
+        if(Gate::allows('update-course', $course)) {
+            // The user can update the post...
+            return Inertia::render('Courses/Edit', ['course' => $course]);
 
-        return Inertia::render('Courses/Edit', compact('course'));
+        }
+        return Redirect::route('courses.index')->with('error', 'This action is not authorizated');
     }
 
     public function update(Request $request, YoutubeServices $ybt)
     {
         $course = Course::where('id', $request->id)->with('episodes')->first();
-        // $this->authorize('update', $course);
 
-        $course->episodes()->delete();
+        if (Gate::allows('update-course', $course)) {
+            // The current user can update the post...
+            $course->episodes()->delete();
 
-        foreach($request->episodes as $episode){
+            foreach($request->episodes as $episode){
 
-            $episode['course_id'] = $course->id;
-            $episode['duration'] = $ybt->handleYoutubeVideoDuration($episode['video_url']);
+                $episode['course_id'] = $course->id;
+                $episode['duration'] = $ybt->handleYoutubeVideoDuration($episode['video_url']);
 
-            Episode::create($episode);
+                Episode::create($episode);
+                return Redirect::route('courses.index')->with('success', 'La formation a bien été modifiée');
+            }
         }
-        return Redirect::route('courses.index')->with('success', 'La formation a bien été modifiée');
+
     }
 
     public function toggleProgress(Request $request)
@@ -106,11 +113,14 @@ class CourseController extends Controller
     public function delete(int $id)
     {
         $course = Course::where('id', $id)->with('episodes')->first();
-        $this->authorize('update', $course);
 
-        $course->delete();
+        if (Gate::allows('update-post', $course)) {
+            // The current user can update the post...
+            $course->delete();
 
-        return Redirect::route('courses.index')->with('success', 'La formation a bien été supprimée !!');
+            return Redirect::route('courses.index')->with('success', 'La formation a bien été supprimée !!');
+        }
+
 
     }
 }

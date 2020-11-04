@@ -6,6 +6,9 @@
             <div class="py-4 text-green-500 bg-green-200 mx-4 mt-4" v-if="$page.flash.success">
                 {{ $page.flash.success }}
             </div>
+            <div class="py-4 text-red-500 bg-red-200 mx-4 mt-4" v-if="$page.flash.error">
+                {{ $page.flash.error }}
+            </div>
             <div class="container mx-auto">
                 <div class="py-5" v-for="course in this.coursesList.data" v-bind:key="course.id">
                     <div class="mx-8 bg-white rounded shadow p-4">

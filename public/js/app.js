@@ -3483,6 +3483,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -26455,6 +26458,14 @@ var render = function() {
               )
             ]
           )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.$page.flash.error
+        ? _c("div", { staticClass: "py-4 text-red-500 bg-red-200 mx-4 mt-4" }, [
+            _vm._v(
+              "\n            " + _vm._s(_vm.$page.flash.error) + "\n        "
+            )
+          ])
         : _vm._e(),
       _vm._v(" "),
       _c(
